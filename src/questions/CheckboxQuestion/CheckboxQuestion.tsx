@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { QuestionComponentProps } from '../../components/Questionnaire/Questionnaire';
 
-interface CheckboxQuestionProps {
-  title: string;
-  options: string[];
-}
-
-export const CheckboxQuestion: React.FC<CheckboxQuestionProps> = ({
+export const CheckboxQuestion: React.FC<QuestionComponentProps> = ({
   title,
-  options,
+  options = [],
+  currentValue,
+  onAnswer,
 }) => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(
+    currentValue ?? []
+  );
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -23,9 +23,13 @@ export const CheckboxQuestion: React.FC<CheckboxQuestionProps> = ({
     });
   };
 
+  React.useEffect(() => {
+    onAnswer(selectedOptions);
+  }, [selectedOptions]);
+
   return (
     <div>
-      <p>{title}</p>
+      {title}
       {options.map((option) => (
         <FormControlLabel
           key={option}

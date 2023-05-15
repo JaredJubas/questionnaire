@@ -3,7 +3,8 @@
     "id": "1",
     "title": "What is your name?",
     "type": "text",
-    "required": true
+    "required": true,
+    "helperText": "Enter only your first name."
   },
   {
     "id": "2",

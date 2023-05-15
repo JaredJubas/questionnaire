@@ -5,25 +5,27 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
+import { QuestionComponentProps } from '../../components/Questionnaire/Questionnaire';
 
-interface SelectQuestionProps {
-  title: string;
-  options: string[];
-}
-
-export const SelectQuestion: React.FC<SelectQuestionProps> = ({
+export const SelectQuestion: React.FC<QuestionComponentProps> = ({
   title,
-  options,
+  options = [],
+  currentValue,
+  onAnswer,
 }) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState((currentValue && currentValue[0]) ?? '');
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     setValue(event.target.value);
   };
 
+  React.useEffect(() => {
+    onAnswer(value);
+  }, [value]);
+
   return (
     <FormControl fullWidth>
-      <p>{title}</p>
+      {title}
       <Select value={value} onChange={handleChange}>
         {options.map((option) => (
           <MenuItem key={option} value={option}>
