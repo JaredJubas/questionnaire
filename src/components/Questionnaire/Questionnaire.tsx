@@ -4,7 +4,7 @@ import { NumberQuestion } from '../../questions/NumberQuestion/NumberQuestion';
 import { SelectQuestion } from '../../questions/SelectQuestion/SelectQuestion';
 import { TextQuestion } from '../../questions/TextQuestion/TextQuestion';
 import axios from 'axios';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, Box, Grid } from '@mui/material';
 import { QuestionTitle } from '../QuestionTitle/QuestionTitle';
 
 interface Question {
@@ -63,7 +63,9 @@ export const Questionnaire: React.FC = () => {
     const currentQuestion = questions[currentQuestionIndex];
     const { id } = currentQuestion;
 
-    if (currentQuestion.required && !answers[id]) {
+    const noAnswer = !answers[id].answer || answers[id].answer.length === 0;
+
+    if (currentQuestion.required && noAnswer) {
       setValidationError(true);
       return;
     }
@@ -99,23 +101,45 @@ export const Questionnaire: React.FC = () => {
     // All questions have been answered
     return (
       <div>
-        <div>
-          Review your answers. Once you confirm the answers are correct hit
-          submit, otherwise hit back to edit.
-        </div>
-        <div>
-          {Object.entries(answers).map(([questionId, { question, answer }]) => (
-            <p key={questionId}>
-              {question} {Array.isArray(answer) ? answer.join(', ') : answer}
-            </p>
-          ))}
-        </div>
-        <Button variant="contained" onClick={handleBackButtonClick}>
-          Back
-        </Button>
-        <Button variant="contained" onClick={handleSubmitButtonClick}>
-          Submit
-        </Button>
+        <Box
+          sx={{
+            backgroundColor: '#f5f5f5',
+            width: '40%',
+            margin: '30px auto',
+            padding: '40px',
+          }}
+        >
+          <p>
+            Review your answers. Once you confirm the answers are correct hit
+            submit, otherwise hit back to edit.
+          </p>
+          <div>
+            {Object.entries(answers).map(
+              ([questionId, { question, answer }]) => (
+                <p key={questionId}>
+                  {question}{' '}
+                  {Array.isArray(answer) ? answer.join(', ') : answer}
+                </p>
+              )
+            )}
+          </div>
+        </Box>
+        <Grid
+          container
+          justifyContent="space-between"
+          sx={{ width: '40%', margin: '16px auto' }}
+        >
+          <Grid item>
+            <Button variant="contained" onClick={handleBackButtonClick}>
+              Back
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant="contained" onClick={handleSubmitButtonClick}>
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </div>
     );
   }
@@ -136,35 +160,54 @@ export const Questionnaire: React.FC = () => {
     <QuestionTitle title={title} required={required} helperText={helperText} />
   );
 
-  const normalizedCurrentValue = Array.isArray(currentValue)
-    ? currentValue
-    : [currentValue];
+  const normalizedCurrentValue = currentValue
+    ? Array.isArray(currentValue)
+      ? currentValue
+      : [currentValue]
+    : undefined;
 
   return (
-    <div key={id}>
-      {validationError && (
-        <Typography variant="body2" color="error">
-          This question is required.
-        </Typography>
-      )}
-      <QuestionComponent
-        title={newTitle}
-        options={options}
-        currentValue={normalizedCurrentValue}
-        onAnswer={(answer: string | string[]) =>
-          handleQuestionAnswer(id, answer)
-        }
-      />
-      <div>
-        {currentQuestionIndex !== 0 && (
-          <Button variant="contained" onClick={handleBackButtonClick}>
-            Back
-          </Button>
+    <div>
+      <Box
+        sx={{
+          backgroundColor: '#f5f5f5',
+          width: '40%',
+          margin: '30px auto',
+          padding: '40px',
+        }}
+      >
+        {validationError && (
+          <Typography variant="body2" color="error">
+            This question is required.
+          </Typography>
         )}
-      </div>
-      <Button variant="contained" onClick={handleNextButtonClick}>
-        Next
-      </Button>
+        <QuestionComponent
+          title={newTitle}
+          options={options}
+          currentValue={normalizedCurrentValue}
+          onAnswer={(answer: string | string[]) =>
+            handleQuestionAnswer(id, answer)
+          }
+        />
+      </Box>
+      <Grid
+        container
+        justifyContent="space-between"
+        sx={{ width: '40%', margin: '16px auto' }}
+      >
+        <Grid item>
+          {currentQuestionIndex !== 0 && (
+            <Button variant="contained" onClick={handleBackButtonClick}>
+              Back
+            </Button>
+          )}
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={handleNextButtonClick}>
+            Next
+          </Button>
+        </Grid>
+      </Grid>
     </div>
   );
 };
