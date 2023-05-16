@@ -63,7 +63,7 @@ export const Questionnaire: React.FC = () => {
     const currentQuestion = questions[currentQuestionIndex];
     const { id } = currentQuestion;
 
-    const noAnswer = !answers[id].answer || answers[id].answer.length === 0;
+    const noAnswer = !answers[id]?.answer || answers[id]?.answer.length === 0;
 
     if (currentQuestion.required && noAnswer) {
       setValidationError(true);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { QuestionComponentProps } from '../../components/Questionnaire/Questionnaire';
 
@@ -23,7 +23,7 @@ export const CheckboxQuestion: React.FC<QuestionComponentProps> = ({
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     onAnswer(selectedOptions);
   }, [selectedOptions]);
 
