@@ -107,6 +107,7 @@ export const Questionnaire: React.FC = () => {
             width: '40%',
             margin: '30px auto',
             padding: '40px',
+            borderRadius: '16px',
           }}
         >
           <p>
@@ -117,7 +118,7 @@ export const Questionnaire: React.FC = () => {
             {Object.entries(answers).map(
               ([questionId, { question, answer }]) => (
                 <p key={questionId}>
-                  {question}{' '}
+                  <b>{question} </b>
                   {Array.isArray(answer) ? answer.join(', ') : answer}
                 </p>
               )
@@ -174,6 +175,7 @@ export const Questionnaire: React.FC = () => {
           width: '40%',
           margin: '30px auto',
           padding: '40px',
+          borderRadius: '16px',
         }}
       >
         {validationError && (
