@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useMutation, gql } from '@apollo/client';
 import { CheckboxQuestion } from '../../questions/CheckboxQuestion/CheckboxQuestion';
 import { NumberQuestion } from '../../questions/NumberQuestion/NumberQuestion';
 import { SelectQuestion } from '../../questions/SelectQuestion/SelectQuestion';
@@ -16,10 +17,16 @@ interface Question {
   helperText?: string;
 }
 
-interface AnswersMap {
+export interface AnswersMap {
   question: string;
   answer: string | string[];
 }
+
+const SUBMIT_QUESTIONNAIRE = gql`
+  mutation SubmitQuestionnaire($answers: [QuestionnaireAnswerInput!]!) {
+    submitQuestionnaire(answers: $answers)
+  }
+`;
 
 export interface QuestionComponentProps {
   title: React.JSX.Element;
@@ -33,6 +40,8 @@ export const Questionnaire: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswersMap>>({});
   const [validationError, setValidationError] = useState(false);
+
+  const [submitQuestionnaire] = useMutation(SUBMIT_QUESTIONNAIRE);
 
   // Load the questions from the JSON
   useEffect(() => {
@@ -78,8 +87,18 @@ export const Questionnaire: React.FC = () => {
     setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
   };
 
-  const handleSubmitButtonClick = () => {
-    console.log('Yay you submitted!');
+  const handleSubmitButtonClick = async () => {
+    const answersArray = Object.values(answers).map(({ question, answer }) => ({
+      question,
+      answer: Array.isArray(answer) ? answer : [answer],
+    }));
+
+    try {
+      await submitQuestionnaire({ variables: { answers: answersArray } });
+      console.log('Questionnaire submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting questionnaire:', error);
+    }
   };
 
   const handleQuestionAnswer = (
