@@ -7,6 +7,7 @@ import { TextQuestion } from '../../questions/TextQuestion/TextQuestion';
 import axios from 'axios';
 import { Button, Typography, Box, Grid } from '@mui/material';
 import { QuestionTitle } from '../QuestionTitle/QuestionTitle';
+import { QuestionnaireSubmit } from '../QuestionnaireSubmit/QuestionnaireSubmit';
 
 interface Question {
   id: string;
@@ -119,48 +120,11 @@ export const Questionnaire: React.FC = () => {
   if (!currentQuestion) {
     // All questions have been answered
     return (
-      <div>
-        <Box
-          sx={{
-            backgroundColor: '#f5f5f5',
-            width: '40%',
-            margin: '30px auto',
-            padding: '40px',
-            borderRadius: '16px',
-          }}
-        >
-          <p>
-            Review your answers. Once you confirm the answers are correct hit
-            submit, otherwise hit back to edit.
-          </p>
-          <div>
-            {Object.entries(answers).map(
-              ([questionId, { question, answer }]) => (
-                <p key={questionId}>
-                  <b>{question} </b>
-                  {Array.isArray(answer) ? answer.join(', ') : answer}
-                </p>
-              )
-            )}
-          </div>
-        </Box>
-        <Grid
-          container
-          justifyContent="space-between"
-          sx={{ width: '40%', margin: '16px auto' }}
-        >
-          <Grid item>
-            <Button variant="contained" onClick={handleBackButtonClick}>
-              Back
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={handleSubmitButtonClick}>
-              Submit
-            </Button>
-          </Grid>
-        </Grid>
-      </div>
+      <QuestionnaireSubmit
+        answers={answers}
+        onBackButtonClick={handleBackButtonClick}
+        onSubmitButtonClick={handleSubmitButtonClick}
+      />
     );
   }
 

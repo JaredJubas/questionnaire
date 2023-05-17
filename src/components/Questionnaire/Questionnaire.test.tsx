@@ -3,10 +3,15 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import axios from 'axios';
 import { Questionnaire } from './Questionnaire';
+import userEvent from '@testing-library/user-event';
+import { useMutation } from '@apollo/client';
 
 jest.mock('axios');
+jest.mock('@apollo/client');
 
 describe('Questionnaire', () => {
+  const mockSubmitQuestionnaire = jest.fn();
+
   const questionsData = [
     {
       id: '1',
@@ -37,11 +42,11 @@ describe('Questionnaire', () => {
   ];
 
   beforeEach(() => {
-    (axios.get as jest.Mock).mockResolvedValue({ data: questionsData });
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
+
+    (useMutation as jest.Mock).mockReturnValue([mockSubmitQuestionnaire]);
+
+    (axios.get as jest.Mock).mockResolvedValue({ data: questionsData });
   });
 
   test('renders the first question', async () => {
@@ -88,5 +93,60 @@ describe('Questionnaire', () => {
       'This question is required.'
     );
     expect(validationError).toBeInTheDocument();
+  });
+
+  it('renders the QuestionnaireSubmit component when all questions have been answered', async () => {
+    const { getByRole, getAllByRole, getByLabelText } = render(
+      <Questionnaire />
+    );
+
+    // Check first question loaded
+    const firstQuestionTitle = await screen.findByText(questionsData[0].title);
+    expect(firstQuestionTitle).toBeInTheDocument();
+
+    // Answer the first question
+    const nextButton = await screen.findByText('Next');
+    const textElement = getByRole('textbox');
+
+    fireEvent.change(textElement, { target: { value: 'Test Answer' } });
+    fireEvent.click(nextButton);
+
+    // Check second question loaded
+    const secondQuestionTitle = await screen.findByText(questionsData[1].title);
+    expect(secondQuestionTitle).toBeInTheDocument();
+
+    // Answer the second question
+    const numberElement = getByRole('spinbutton');
+    fireEvent.change(numberElement, { target: { value: '20' } });
+
+    fireEvent.click(nextButton);
+
+    // Check third question loaded
+    const thirdQuestionTitle = await screen.findByText(questionsData[2].title);
+    expect(thirdQuestionTitle).toBeInTheDocument();
+
+    // Answer the third question
+    const selectButton = getAllByRole('button')[0];
+    fireEvent.mouseDown(selectButton);
+
+    const optionElements = getAllByRole('option');
+
+    fireEvent.click(optionElements[0], { target: { value: 'Option 1' } });
+
+    fireEvent.click(nextButton);
+
+    // Check fourth question loaded
+    const fourthQuestionTitle = await screen.findByText(questionsData[3].title);
+    expect(fourthQuestionTitle).toBeInTheDocument();
+
+    // Answer the fourth question
+    userEvent.click(getByLabelText('Option A'));
+    fireEvent.change(getByLabelText('Option A'), { target: { checked: true } });
+
+    fireEvent.click(nextButton);
+
+    // QuestionnaireSubmit should have been rendered
+    const submitButton = screen.getByText('Submit');
+    expect(submitButton).toBeInTheDocument();
   });
 });
