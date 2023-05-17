@@ -1,8 +1,8 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
-import { NumberQuestion } from './NumberQuestion';
 import userEvent from '@testing-library/user-event';
+import { NumberQuestion } from './NumberQuestion';
 
 describe('NumberQuestion', () => {
   const title = <h3>Question Title</h3>;

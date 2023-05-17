@@ -43,55 +43,51 @@ describe('Questionnaire', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-
     (useMutation as jest.Mock).mockReturnValue([mockSubmitQuestionnaire]);
-
     (axios.get as jest.Mock).mockResolvedValue({ data: questionsData });
   });
 
   test('renders the first question', async () => {
-    render(<Questionnaire />);
-    const questionTitle = await screen.findByText(questionsData[0].title);
+    const { findByText } = render(<Questionnaire />);
+    const questionTitle = await findByText(questionsData[0].title);
     expect(questionTitle).toBeInTheDocument();
   });
 
   test('navigates to the next question when clicking "Next"', async () => {
-    render(<Questionnaire />);
-    const nextButton = await screen.findByText('Next');
-    const inputElement = screen.getByRole('textbox');
+    const { findByText, getByRole } = render(<Questionnaire />);
+    const nextButton = await findByText('Next');
+    const inputElement = getByRole('textbox');
 
     fireEvent.change(inputElement, { target: { value: 'Test Answer' } });
     fireEvent.click(nextButton);
 
-    const secondQuestionTitle = await screen.findByText(questionsData[1].title);
+    const secondQuestionTitle = await findByText(questionsData[1].title);
     expect(secondQuestionTitle).toBeInTheDocument();
   });
 
   test('navigates to the previous question when clicking "Back"', async () => {
-    render(<Questionnaire />);
-    const nextButton = await screen.findByText('Next');
-    const inputElement = screen.getByRole('textbox');
+    const { findByText, getByRole } = render(<Questionnaire />);
+    const nextButton = await findByText('Next');
+    const inputElement = getByRole('textbox');
 
     fireEvent.change(inputElement, { target: { value: 'Test Answer' } });
     fireEvent.click(nextButton);
 
-    const backButton = await screen.findByText('Back');
+    const backButton = await findByText('Back');
 
     fireEvent.click(backButton);
 
-    const firstQuestionTitle = await screen.findByText(questionsData[0].title);
+    const firstQuestionTitle = await findByText(questionsData[0].title);
     expect(firstQuestionTitle).toBeInTheDocument();
   });
 
   test('displays validation error when required question is not answered', async () => {
-    render(<Questionnaire />);
-    const nextButton = await screen.findByText('Next');
+    const { findByText } = render(<Questionnaire />);
+    const nextButton = await findByText('Next');
 
     fireEvent.click(nextButton);
 
-    const validationError = await screen.findByText(
-      'This question is required.'
-    );
+    const validationError = await findByText('This question is required.');
     expect(validationError).toBeInTheDocument();
   });
 

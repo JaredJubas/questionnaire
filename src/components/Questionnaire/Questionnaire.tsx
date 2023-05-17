@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import axios from 'axios';
 import { CheckboxQuestion } from '../../questions/CheckboxQuestion/CheckboxQuestion';
 import { NumberQuestion } from '../../questions/NumberQuestion/NumberQuestion';
 import { SelectQuestion } from '../../questions/SelectQuestion/SelectQuestion';
 import { TextQuestion } from '../../questions/TextQuestion/TextQuestion';
-import axios from 'axios';
 import { Button, Typography, Box, Grid } from '@mui/material';
 import { QuestionTitle } from '../QuestionTitle/QuestionTitle';
 import { QuestionnaireSubmit } from '../QuestionnaireSubmit/QuestionnaireSubmit';
@@ -144,6 +144,8 @@ export const Questionnaire: React.FC = () => {
     <QuestionTitle title={title} required={required} helperText={helperText} />
   );
 
+  // If currentValue is a string then convert to string[]. Otherwise leave as is. CurrentValue could
+  // possibly be undefined
   const normalizedCurrentValue = currentValue
     ? Array.isArray(currentValue)
       ? currentValue

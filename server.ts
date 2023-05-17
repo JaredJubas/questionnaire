@@ -18,6 +18,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Mutation: {
+    // First parameter represent the parent object which is not needed here
     submitQuestionnaire: (_: any, { answers }: { answers: AnswersMap }) => {
       // Process and handle the submitted questionnaire answers here
       console.log('Got the answers', answers);

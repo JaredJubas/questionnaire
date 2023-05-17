@@ -1,8 +1,8 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
-import { CheckboxQuestion } from './CheckboxQuestion';
 import userEvent from '@testing-library/user-event';
+import { CheckboxQuestion } from './CheckboxQuestion';
 
 describe('CheckboxQuestion', () => {
   const title = <h3>Question Title</h3>;
