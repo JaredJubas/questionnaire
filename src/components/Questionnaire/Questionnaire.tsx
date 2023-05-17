@@ -12,7 +12,7 @@ import { QuestionnaireSubmit } from '../QuestionnaireSubmit/QuestionnaireSubmit'
 interface Question {
   id: string;
   title: string;
-  type: 'text' | 'number' | 'select' | 'checkbox';
+  type: string;
   required: boolean;
   options?: string[];
   helperText?: string;
@@ -60,7 +60,7 @@ export const Questionnaire: React.FC = () => {
 
   // Create a record to map possible question types
   const questionComponents: Record<
-    Question['type'],
+    string,
     React.ComponentType<QuestionComponentProps>
   > = {
     text: TextQuestion,
@@ -128,14 +128,14 @@ export const Questionnaire: React.FC = () => {
     );
   }
 
-  const { id, title, options, required, helperText } = currentQuestion;
+  const { id, title, options, required, helperText, type } = currentQuestion;
 
   const currentValue = answers[id]?.answer;
 
-  const QuestionComponent = questionComponents[currentQuestion.type];
+  const QuestionComponent = questionComponents[type];
 
   if (!QuestionComponent) {
-    console.warn(`Unsupported question type: ${currentQuestion.type}`);
+    console.warn(`Unsupported question type: ${type}`);
     return null;
   }
 
